@@ -16,6 +16,7 @@ module Sinatra
       helpers :ContentFor
       helpers :EngineTracking
       helpers :LinkHeader
+      helpers :Jsonp
     end
 
     ##
