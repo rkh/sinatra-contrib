@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'yaml'
+require 'erb'
 
 module Sinatra
 
@@ -94,9 +95,22 @@ module Sinatra
   #
   # Be aware that if you have a different environment, besides development,
   # test and production, you will also need to adjust the +environments+
-  # setting.  For instance, when you also have a staging environment:
+  # setting, otherwise the settings will not load.  For instance, when
+  # you also have a staging environment:
   #
   #     set :environments, %w{development test production staging}
+  #
+  # If you wish to provide defaults that may be shared among all the environments,
+  # this can be done by using one of the existing environments as the default using
+  # the YAML alias, and then overwriting values in the other environments:
+  #
+  #     development: &common_settings
+  #       foo: 'foo'
+  #       bar: 'bar'
+  #
+  #     production:
+  #       <<: *common_settings
+  #       bar: 'baz' # override the default value
   #
   module ConfigFile
 
@@ -114,7 +128,9 @@ module Sinatra
         paths.each do |pattern|
           Dir.glob(pattern) do |file|
             $stderr.puts "loading config file '#{file}'" if logging?
-            yaml = config_for_env(YAML.load_file(file)) || {}
+            document = IO.read(file)
+            document = ERB.new(document).result if file.split('.').include?('erb')
+            yaml = config_for_env(YAML.load(document)) || {}
             yaml.each_pair do |key, value|
               for_env = config_for_env(value)
               set key, for_env unless value and for_env.nil? and respond_to? key
