@@ -11,7 +11,7 @@ module Sinatra
   # Allows you to read cookies:
   #
   #   get '/' do
-  #     "value: #{cookie[:something]}"
+  #     "value: #{cookies[:something]}"
   #   end
   #
   # And of course to write cookies:
@@ -111,7 +111,7 @@ module Sinatra
 
       def delete(key)
         result = self[key]
-        @response.delete_cookie(key.to_s)
+        @response.delete_cookie(key.to_s, @options)
         result
       end
 

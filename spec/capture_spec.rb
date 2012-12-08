@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'backports'
 require 'slim'
 require_relative 'spec_helper'
@@ -20,6 +21,7 @@ describe Sinatra::Capture do
 
   shared_examples_for "a template language" do |engine|
     lang = engine == :erubis ? :erb : engine
+    require "#{engine}"
 
     it "captures content" do
       render(engine, "simple_#{lang}").should == "Say Hello World!"
@@ -32,8 +34,15 @@ describe Sinatra::Capture do
 
   describe('haml')   { it_behaves_like "a template language", :haml   }
   describe('slim')   { it_behaves_like "a template language", :slim   }
-  describe('erb')    { it_behaves_like "a template language", :erb    }
   describe('erubis') { it_behaves_like "a template language", :erubis }
+
+  describe 'erb' do
+    it_behaves_like "a template language", :erb
+
+    it "handles utf-8 encoding" do
+      render(:erb, "utf_8").should == "UTF-8 –"
+    end
+  end
 end
 
 __END__
@@ -78,3 +87,7 @@ Say
     World
   #{b.strip}!
 Hello #{a.strip}
+
+@@ utf_8
+<% a = capture do %>–<% end %>
+UTF-8 <%= a %>

@@ -3,8 +3,6 @@ rvm:
 - 1.8.7
 - 1.9.2
 - 1.9.3
-- rbx-18mode
-- rbx-19mode
 - jruby
 - ruby-head
 env:
@@ -18,3 +16,7 @@ notifications:
   - k.haase@finn.de
   - ohhgabriel@gmail.com
   - inbox@trevorbramble.com
+  - katrina.owen@gmail.com
+matrix:
+  allow_failures:
+    - rvm: ruby-head
